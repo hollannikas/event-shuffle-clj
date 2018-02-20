@@ -21,7 +21,7 @@
 (defn add-event! [event]
   (let [new-event (assoc event :id (create-uuid!))]
     (swap! database conj new-event)
-    (ok new-event)))
+    (ok (:id new-event))))
 
 (defn get-events []
   (ok @database))
