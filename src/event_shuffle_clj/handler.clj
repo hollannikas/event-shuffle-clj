@@ -1,10 +1,11 @@
 (ns event-shuffle-clj.handler
   (:require [compojure.api.sweet :refer :all]
             [ring.util.http-response :refer :all]
-            [schema.core :as s]))
+            [schema.core :as s])
+  (:import (java.util UUID)))
 
 (defn create-uuid! []
-  (str (java.util.UUID/randomUUID)))
+  (str (UUID/randomUUID)))
 
 (s/defschema Event
   {:id    s/Str
@@ -27,7 +28,8 @@
   (ok @database))
 
 (defn find-event [id]
-  (ok ((filter #(= (:id id))) @database)))
+  (ok (filter (fn [x]
+                (= (get x :id) id)) @database)))
 
 (defapi app
   (swagger-routes)
@@ -58,8 +60,11 @@
 (comment
   ;; clear
   (reset! database [])
+  (println)
+  (println (filter #(= (get % :id) "4334494d-1f2b-4e61-8508-b5be57d1d857")) @database)
 
+  (println (filter #(= :id "4334494d-1f2b-4e61-8508-b5be57d1d857") @database))
   (println (add-event! {:name "Bob" :date "01-01-2010"}))
   (println (ok {:message @database}))
   (println (get-events))
-  (println (find-event "7cbaf159-0f31-4a2b-8dd4-d26fbc92bfac")))
+  (println (find-event "4334494d-1f2b-4e61-8508-b5be57d1d857")))
